@@ -1,0 +1,64 @@
+users [icon: user] {
+  user_id serial pk
+  name varchar(100) not null
+  email varchar(100) unique not null
+  role enum ('trainer','client') not null
+
+  createdAt timestamp
+}
+
+
+plans [icon: package] {
+  plan_id serial pk
+  trainer_id int fk
+  plan_name varchar(100)
+  price decimal(10,2)
+  duration_days int
+}
+
+
+subscriptions [icon: repeat] {
+  subscription_id serial pk
+  client_id int fk
+  plan_id int fk
+  start_date date
+  end_date date
+  status enum ('active','completed')
+}
+
+
+sessions [icon: calendar] {
+  session_id serial pk
+  trainer_id int fk
+  client_id int fk
+  session_date timestamp
+  status enum ('scheduled','done')
+}
+
+
+checkins [icon: activity] {
+  checkin_id serial pk
+  client_id int fk
+  weight decimal(5,2)
+  notes text
+  date timestamp
+}
+
+
+payments [icon: cash] {
+  payment_id serial pk
+  subscription_id int fk
+  amount decimal(10,2)
+  status enum ('paid','pending')
+}
+users.user_id < plans.trainer_id
+
+users.user_id < subscriptions.client_id
+plans.plan_id < subscriptions.plan_id
+
+users.user_id < sessions.trainer_id
+users.user_id < sessions.client_id
+
+users.user_id < checkins.client_id
+
+subscriptions.subscription_id < payments.subscription_id
